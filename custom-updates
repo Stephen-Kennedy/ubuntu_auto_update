@@ -12,10 +12,10 @@ FILENAME=dailyUpdate
 DISTRIBUTION=$FILEPATH/$FILENAME
 MAIL=/usr/sbin/sendmail
 TO=medicup@gmail.com
-SUBJECT="utomated update report from $THISHOST"
+
 
 mailOutput(){
-        $MAIL -s $SUBJECT $TO < $DISTRIBUTION
+        $MAIL -F admin@$THISHOST -t $TO < $DISTRIBUTION
 }
 
 checkSuccess(){
@@ -55,7 +55,7 @@ startAptGetRemove(){
         echo Initiating apt-get automove of $THISHOST... >> $DISTRIBUTION
         apt-get autoremove -y >> $DISTRIBUTION
         checkSuccess;
-        echo "" $DISTRIBUTION
+        echo "" >> $DISTRIBUTION
         echo Upgrade of $THISHOST complete. >> $DISTRIBUTION
 }
 
