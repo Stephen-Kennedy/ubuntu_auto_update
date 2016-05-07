@@ -1,8 +1,8 @@
 #!/bin/bash
 #This script allows for update, upgrade, and dist-upgrade
 #Author: Stephen J Kennedy
-#The file path is in a hidden directory in the /var/log directory
-#Filename will be the hostname.txt
+#The file path is in a hidden directory in the /var/log./autoUpdate
+#Filename will be the dailyUpdate
 
 THISHOST=$(hostname -f)
 DATE=`date +%m-%d-%y`
