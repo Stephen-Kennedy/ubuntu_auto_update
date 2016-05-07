@@ -8,12 +8,14 @@ THISHOST=$(hostname -f)
 DATE=`date +%m-%d-%y`
 TIME=`date +%H:%M:%S`
 FILEPATH=/var/log/.autoUpdate
-FILENAME=$FILEPATH/${THISHOST}.txt
+FILENAME=dailyUpdate
+DISTRIBUTION=$FILEPATH/$FILENAME
+MAIL=/usr/sbin/sendmail
 TO=medicup@gmail.com
-SUBJECT="Automated update report from $THISHOST"
+SUBJECT="utomated update report from $THISHOST"
 
 mailOutput(){
-        sendmail -s $SUBJECT $TO < $FILENAME
+        $MAIL -s $SUBJECT $TO < $DISTRIBUTION
 }
 
 checkSuccess(){
@@ -27,39 +29,39 @@ checkSuccess(){
 #Initiates the auto update, but excludes the output of the console
 startAutoUpdate(){
         mkdir -p $FILEPATH;
-        echo It is $DATE and the auto update initiated for $THISHOST at $TIME. > $FILENAME
+        echo It is $DATE and the auto update initiated for $THISHOST at $TIME. > $DISTRIBUTION
         apt-get update > /dev/null
         checkSuccess;
-        echo "" >> $FILENAME
+        echo "" >> $DISTRIBUTION
 }
 
 #Initiates the upgrade and includes the end results.
 startAutoUpgrade(){
-        echo Initiating upgrade of $THISHOST >> $FILENAME
-        apt-get upgrade -y >> $FILENAME
+        echo Initiating upgrade of $THISHOST >> $DISTRIBUTION
+        apt-get upgrade -y >> $DISTRIBUTION
         checkSuccess;
-        echo "" >> $FILENAME
+        echo "" >> $DISTRIBUTION
 }
 
 #Initiates the dist-upgrade and includes the end results
 startAutoDistUpgrade(){
-        echo Initiating dist-upgrade of $THISHOST... >> $FILENAME
-        apt-get dist-upgrade -y >> $FILENAME
+        echo Initiating dist-upgrade of $THISHOST... >> $DISTRIBUTION
+        apt-get dist-upgrade -y >> $DISTRIBUTION
         checkSuccess;
-        echo "" >> $FILENAME
+        echo "" >> $DISTRIBUTION
         }
 
 startAptGetRemove(){
-        echo Initiating apt-get automove of $THISHOST... >> $FILENAME
-        apt-get autoremove -y >> $FILENAME
+        echo Initiating apt-get automove of $THISHOST... >> $DISTRIBUTION
+        apt-get autoremove -y >> $DISTRIBUTION
         checkSuccess;
-        echo "" $FILENAME
-        echo Upgrade of $THISHOST completed at $DATE-$TIME >> $FILENAME
+        echo "" $DISTRIBUTION
+        echo Upgrade of $THISHOST complete. >> $DISTRIBUTION
 }
-
 
 startAutoUpdate;
 startAutoUpgrade;
 startAutoDistUpgrade;
 startAptGetRemove;
 mailOutput;
+
