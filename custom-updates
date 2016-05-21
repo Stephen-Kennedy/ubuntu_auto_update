@@ -38,7 +38,7 @@ startAutoUpdate(){
 #Initiates the upgrade and includes the end results.
 startAutoUpgrade(){
         echo Initiating upgrade of $THISHOST >> $DISTRIBUTION
-        apt-get upgrade -y >> $DISTRIBUTION
+        DEBIAN_FRONTEND=nontinteractive apt-get -y upgrade >> $DISTRIBUTION
         checkSuccess;
         echo "" >> $DISTRIBUTION
 }
@@ -46,14 +46,14 @@ startAutoUpgrade(){
 #Initiates the dist-upgrade and includes the end results
 startAutoDistUpgrade(){
         echo Initiating dist-upgrade of $THISHOST... >> $DISTRIBUTION
-        apt-get dist-upgrade -y >> $DISTRIBUTION
+        DEBIAN_FRONTEND=nontinteractive apt-get -y dist-upgrade >> $DISTRIBUTION
         checkSuccess;
         echo "" >> $DISTRIBUTION
         }
 
 startAptGetRemove(){
         echo Initiating apt-get automove of $THISHOST... >> $DISTRIBUTION
-        apt-get autoremove -y >> $DISTRIBUTION
+        DEBIAN_FRONTEND=nontinteractive apt-get -y autoremove >> $DISTRIBUTION
         checkSuccess;
         echo "" >> $DISTRIBUTION
         echo Upgrade of $THISHOST complete. >> $DISTRIBUTION
