@@ -3,6 +3,7 @@
 #Author: Stephen J Kennedy
 #The file path is in a hidden directory in the /var/log./autoUpdate
 #Filename will be the dailyUpdate
+PATH=/usr/bin:/bin:/usr/sbin:/sbin
 
 THISHOST=$(hostname -f)
 DATE=`date +%m-%d-%y`
