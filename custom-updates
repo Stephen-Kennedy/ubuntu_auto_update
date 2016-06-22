@@ -3,66 +3,28 @@
 #Author: Stephen J Kennedy
 #The file path is in a hidden directory in the /var/log./autoUpdate
 #Filename will be the dailyUpdate
-PATH=/usr/bin:/bin:/usr/sbin:/sbin
 
-THISHOST=$(hostname -f)
+HOST=$(hostname -f)
 DATE=`date +%m-%d-%y`
 TIME=`date +%H:%M:%S`
 FILEPATH=/var/log/.autoUpdate
 FILENAME=dailyUpdate
-DISTRIBUTION=$FILEPATH/$FILENAME
+OUTPUT=$FILEPATH/$FILENAME
 MAIL=/usr/sbin/sendmail
 TO=medicup@gmail.com
 
-
 mailOutput(){
-        $MAIL -F admin@$THISHOST -t $TO < $DISTRIBUTION
+        $MAIL -F admin@${THISHOST} -t $TO < $OUTPUT
 }
 
-checkSuccess(){
-        if [ $? == 0 ]; then
-           echo Succeeded >> $FILENAME
-        else
-           echo FAILED! >> $FILENAME
-        fi
+autoUpdate (){
+echo "Starting update for $HOSTNAME at $TIME on ${DATE}." > $OUTPUT
+apt-get update >> $OUTPUT &&
+apt-get upgrade -qq >>  $OUTPUT &&
+apt-get dist-upgrade -qq >> $OUTPUT &&
+apt-get autoremove -qq  >> $OUTPUT || echo "****ALERT: There was an error with the update****" >> $OUTPUT
 }
 
-#Initiates the auto update, but excludes the output of the console
-startAutoUpdate(){
-        mkdir -p $FILEPATH;
-        echo It is $DATE and the auto update initiated for $THISHOST at $TIME. > $DISTRIBUTION
-        apt-get update > /dev/null
-        checkSuccess;
-        echo "" >> $DISTRIBUTION
-}
-
-#Initiates the upgrade and includes the end results.
-startAutoUpgrade(){
-        echo Initiating upgrade of $THISHOST >> $DISTRIBUTION
-        DEBIAN_FRONTEND=nontinteractive apt-get -y upgrade >> $DISTRIBUTION
-        checkSuccess;
-        echo "" >> $DISTRIBUTION
-}
-
-#Initiates the dist-upgrade and includes the end results
-startAutoDistUpgrade(){
-        echo Initiating dist-upgrade of $THISHOST... >> $DISTRIBUTION
-        DEBIAN_FRONTEND=nontinteractive apt-get -y dist-upgrade >> $DISTRIBUTION
-        checkSuccess;
-        echo "" >> $DISTRIBUTION
-        }
-
-startAptGetRemove(){
-        echo Initiating apt-get automove of $THISHOST... >> $DISTRIBUTION
-        DEBIAN_FRONTEND=nontinteractive apt-get -y autoremove >> $DISTRIBUTION
-        checkSuccess;
-        echo "" >> $DISTRIBUTION
-        echo Upgrade of $THISHOST complete. >> $DISTRIBUTION
-}
-
-startAutoUpdate;
-startAutoUpgrade;
-startAutoDistUpgrade;
-startAptGetRemove;
+autoUpdate;
 mailOutput;
 
