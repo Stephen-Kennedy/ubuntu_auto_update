@@ -7,24 +7,33 @@
 HOST=$(hostname -f)
 DATE=`date +%m-%d-%y`
 TIME=`date +%H:%M:%S`
-FILEPATH=/var/log/.autoUpdate
-FILENAME=dailyUpdate
-OUTPUT=$FILEPATH/$FILENAME
+FINAL=/var/log/.autoUpdate/dailyUpdate
+ERR=/var/log/.autoUpdate/.error
 MAIL=/usr/sbin/sendmail
-TO=medicup@gmail.com
+TO=admin@techsolutionsandmore.com
+UPDATE="update upgrade dist-upgrade autoremove"
 
 mailOutput(){
-        $MAIL -F admin@${THISHOST} -t $TO < $OUTPUT
+   $MAIL -F admin@${THISHOST} -t $TO < $FINAL
+}
+
+error (){
+   echo "${DATE}-${TIME}" > $ERR
+   echo "${HOST}-ALERT: There was an error running apt-get ${UPDATE}!" >> $ERR
+   $MAIL -F admin@${THISHOST} -t $TO < $ERR
+   exit
 }
 
 autoUpdate (){
-echo "Starting update for $HOSTNAME at $TIME on ${DATE}." > $OUTPUT
-apt-get update -qq >> $OUTPUT &&
-apt-get upgrade -qq >>  $OUTPUT &&
-apt-get dist-upgrade -qq >> $OUTPUT &&
-apt-get autoremove -qq  >> $OUTPUT || echo "****ALERT: There was an error with the update****" >> $OUTPUT
+echo "Starting update for $HOSTNAME at $TIME on ${DATE}." > $FINAL
+for UPDATE in $UPDATE
+do
+   echo "Starting apt-get ${UPDATE}..." >> $FINAL
+   apt-get $UPDATE -qq || error;
+   echo "apt-get ${UPDATE} successful!" >> $FINAL
+done
 }
 
 autoUpdate;
 mailOutput;
-
+~
