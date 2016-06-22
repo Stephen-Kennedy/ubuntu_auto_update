@@ -35,8 +35,8 @@ echo "Starting update for $HOSTNAME at $TIME on ${DATE}." > $FINAL
 for UPDATE in $UPDATE
 do
    echo "Starting apt-get ${UPDATE}..." >> $FINAL
-   apt-get --assume-yes $UPDATE || error;
-   echo "apt-get ${UPDATE} successful!" >> $FINAL
+   apt-get --assume-yes $UPDATE >> $FINAL || error;
+   echo "apt-get ${UPDATE} successful!" >> $FINAL 
 done
 }
 
