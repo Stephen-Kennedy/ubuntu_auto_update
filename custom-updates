@@ -10,7 +10,7 @@ TIME=`date +%H:%M:%S`
 FINAL=/var/log/.autoUpdate/dailyUpdate
 ERR=/var/log/.autoUpdate/.error
 MAIL=/usr/sbin/sendmail
-TO=admin@techsolutionsandmore.com
+TO=medicup@gmail.com
 UPDATE="update upgrade dist-upgrade autoremove" #options for autoUpdate do statement
 
 #mail Function uses sendmail to distribute results of autoUpdate when no errors
@@ -18,7 +18,7 @@ mailOutput(){
    $MAIL -F admin@${THISHOST} -t $TO < $FINAL
 }
 
-#error function is run when there is an error in the update. 
+#error function is run when there is an error in the update.
 #Will distribute an error notification and exit the program
 error (){
    echo "${DATE}-${TIME}" > $ERR
@@ -27,19 +27,19 @@ error (){
    exit
 }
 
-#autoUpdate function uses a do statement that will run until error or 
-#all update options are processed. It provides a start and success 
+#autoUpdate function uses a do statement that will run until error or
+#all update options are processed. It provides a start and success
 #response that is exported to a text file
 autoUpdate (){
 echo "Starting update for $HOSTNAME at $TIME on ${DATE}." > $FINAL
 for UPDATE in $UPDATE
 do
    echo "Starting apt-get ${UPDATE}..." >> $FINAL
-   apt-get $UPDATE -qq || error;
+   apt-get -qq $UPDATE || error;
    echo "apt-get ${UPDATE} successful!" >> $FINAL
 done
 }
 
 autoUpdate;
 mailOutput;
-~
+exit
