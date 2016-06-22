@@ -19,7 +19,7 @@ mailOutput(){
 
 autoUpdate (){
 echo "Starting update for $HOSTNAME at $TIME on ${DATE}." > $OUTPUT
-apt-get update >> $OUTPUT &&
+apt-get update -qq >> $OUTPUT &&
 apt-get upgrade -qq >>  $OUTPUT &&
 apt-get dist-upgrade -qq >> $OUTPUT &&
 apt-get autoremove -qq  >> $OUTPUT || echo "****ALERT: There was an error with the update****" >> $OUTPUT
