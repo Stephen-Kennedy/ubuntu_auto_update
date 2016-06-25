@@ -4,26 +4,26 @@
 #The file path is in a hidden directory in the /var/log./autoUpdate
 #Filename will be the dailyUpdate
 
-HOST=$(hostname -f)
+THISHOST=$(hostname -f)
 DATE=$(date +"%F")
 TIME=$(date +"%H:%M:%S")
-LOGPATH="/usr/local/sbin/custom"
+LOGPATH="/bin/custom"
 LOG="${LOGPATH}/log/${DATE}-log"
 TEMP="${LOGPATH}/.temp"
-MAIL=/usr/sbin/sendmail
+MAIL=/usr/bin/sendemail
 TO=medicup@gmail.com
 UPDATE="upgrade dist-upgrade autoremove" #options for autoUpdate do statement
 
 #mail Function uses sendmail to distribute results of autoUpdate when no errors
 mailOutput(){
-   $MAIL -F admin@${THISHOST} -t $TO < $LOG
+   $MAIL -f admin@${THISHOST} -t $TO -m "Update log from $THISHOST" < $LOG
 }
 
 #error function is run when there is an error in the update.
 #Will distribute an error notification and exit the program
 error (){
    echo "${DATE}-${TIME}" > $ERR
-   echo "${HOST}-ALERT: There was an error running apt-get ${UPDATE}!" >> $ERR
+   echo "${THISHOST}-ALERT: There was an error running apt-get ${UPDATE}!" >> $ERR
    $MAIL -F admin@${THISHOST} -t $TO < $ERR
    exit
 }
@@ -47,5 +47,3 @@ done
 autoUpdate
 mailOutput
 exit
-
-
