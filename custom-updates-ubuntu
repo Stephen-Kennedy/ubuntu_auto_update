@@ -27,6 +27,14 @@ error (){
    exit
 }
 
+#checks to see if log is present, if not creates
+logCreate(){
+   if [ ! -f $LOG ]
+      then
+         echo "Creating log file."
+   fi
+}
+
 #autoUpdate function uses a do statement that will run until error or
 #all update options are processed. It provides a start and success
 #response that is exported to a text file
@@ -43,6 +51,7 @@ do
 done
 }
 
+logCreate
 autoUpdate
 mailOutput
 exit
