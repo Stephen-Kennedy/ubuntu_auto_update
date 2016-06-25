@@ -9,7 +9,7 @@ TIME=$(date +"%H:%M:%S")
 LOGPATH="/bin/custom"
 LOG="${LOGPATH}/log/${DATE}-log"
 TEMP="${LOGPATH}/.temp"
-MAIL=/usr/sbin/sendmail
+MAIL=/usr/bin/sendemail
 TO=medicup@gmail.com
 UPDATE="upgrade dist-upgrade autoremove" #options for autoUpdate do statement
 
