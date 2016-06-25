@@ -1,26 +1,31 @@
-#!/bin/bash
+#!/bin/bash -x
 #This script allows for update, upgrade, and dist-upgrade
 #Author: Stephen J Kennedy
 #The file path is in a hidden directory in the /var/log./autoUpdate
 #Filename will be the dailyUpdate
+logger Initiating updates.sh
 
 HOST=$(hostname -f)
-DATE=`date +%m-%d-%y`
+DATE=`date +%F`
 TIME=`date +%H:%M:%S`
+PATHLOG=/var/log/.autoupdate/
+DAILYLOG=${PATHLOG}${DATE}update.log
+
 FINAL=/var/log/.autoUpdate/dailyUpdate
 ERR=/var/log/.autoUpdate/.error
+
 MAIL=/usr/sbin/sendmail
 TO=medicup@gmail.com
-UPDATE="update upgrade dist-upgrade autoremove" #options for autoUpdate do statement
+UPDATE="upgrade dist-upgrade autoremove" #options for autoUpdate do statement
 
 #mail Function uses sendmail to distribute results of autoUpdate when no errors
 mailOutput(){
-   $MAIL -F admin@${THISHOST} -t $TO < $FINAL
+   $MAIL -F admin@${THISHOST} -t $TO < $DAILYLOG
 }
 
 #error function is run when there is an error in the update.
 #Will distribute an error notification and exit the program
-error (){
+fError (){
    echo "${DATE}-${TIME}" > $ERR
    echo "${HOST}-ALERT: There was an error running apt-get ${UPDATE}!" >> $ERR
    $MAIL -F admin@${THISHOST} -t $TO < $ERR
@@ -31,12 +36,13 @@ error (){
 #all update options are processed. It provides a start and success
 #response that is exported to a text file
 autoUpdate (){
-echo "Starting update for $HOSTNAME at $TIME on ${DATE}." > $FINAL
+echo "Starting update for $HOSTNAME at $TIME on ${DATE}." > $DAILYLOG
+apt-get update  || fError
 for UPDATE in $UPDATE
 do
-   echo "Starting apt-get ${UPDATE}..." >> $FINAL
-   apt-get --assume-yes $UPDATE >> $FINAL || error;
-   echo "apt-get ${UPDATE} successful!" >> $FINAL 
+   echo "Starting apt-get ${UPDATE}..." >> $DAILYLOG
+   apt-get --assume-yes $UPDATE >> $FINAL || fError
+   echo "apt-get ${UPDATE} successful!" >> $DAILYLOG 
 done
 }
 
