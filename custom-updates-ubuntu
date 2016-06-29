@@ -1,30 +1,30 @@
 #!/bin/bash -x
 #This script allows for update, upgrade, and dist-upgrade
 #Author: Stephen J Kennedy
-#kali fork
+#The file path is in a hidden directory in the /var/log./autoUpdate
+#Filename will be the dailyUpdate
 
 THISHOST=$(hostname -f)
 DATE=$(date +"%F")
 TIME=$(date +"%H:%M:%S")
 LOGPATH="/bin/custom"
-LOG="${LOGPATH}/log/${DATE}-log"
+PID=$BASHPID
+LOG="${LOGPATH}/log/${DATE}-${PID}-log"
 TEMP="${LOGPATH}/.temp"
-MAIL=/usr/bin/sendemail
-TO=medicup@gmail.com
-UPDATE="upgrade dist-upgrade autoremove" #options for autoUpdate do statement
+MAIL=/usr/bin/mail
+TO="medicup@gmail.com"
+UPDATE="upgrades dist-upgrade autoremove" #options for autoUpdate do statement
 
-#mail Function uses sendmail to distribute results of autoUpdate when no errors
+#mail Function uses mail to distribute results of autoUpdate
 mailOutput(){
-   $MAIL -f admin@${THISHOST} -t $TO -m "Update log from $THISHOST" < $LOG
-}
-
-#error function is run when there is an error in the update.
-#Will distribute an error notification and exit the program
-error (){
-   echo "${DATE}-${TIME}" > $ERR
-   echo "${THISHOST}-ALERT: There was an error running apt-get ${UPDATE}!" >> $ERR
-   $MAIL -F admin@${THISHOST} -t $TO < $ERR
-   exit
+if [ $? -ne 0 ]
+   then
+      echo "mail error"
+      $MAIL -s "Error with ${HOSTNAME} update: check ${UPDATE}." $TO < $LOG
+   else
+      echo "Success!"
+      $MAIL -s ${DATE}-${THISHOST}  $TO < $LOG
+fi
 }
 
 #autoUpdate function uses a do statement that will run until error or
@@ -35,14 +35,15 @@ autoUpdate (){
 echo "Starting update for $HOSTNAME at $TIME on ${DATE}." > $LOG
 sudo apt-get update
 
+
 for UPDATE in $UPDATE
 do
    echo "Starting apt-get ${UPDATE}..." >> $LOG
-   apt-get --assume-yes $UPDATE >> $LOG || error
+   apt-get --assume-yes $UPDATE >> $LOG ||  return 1
    echo "apt-get ${UPDATE} successful!" >> $LOG
 done
 }
 
 autoUpdate
 mailOutput
-exit
+exit 0
