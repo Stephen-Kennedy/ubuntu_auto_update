@@ -13,7 +13,7 @@ LOG="${LOGPATH}/log/${DATE}-${PID}-log"
 TEMP="${LOGPATH}/.temp"
 MAIL=/usr/bin/mail
 TO="medicup@gmail.com"
-UPDATE="upgrades dist-upgrade autoremove" #options for autoUpdate do statement
+UPDATE="upgrade dist-upgrade autoremove" #options for autoUpdate do statement
 
 #mail Function uses mail to distribute results of autoUpdate
 mailOutput(){
