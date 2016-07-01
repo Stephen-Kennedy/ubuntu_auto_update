@@ -1,5 +1,5 @@
 #!/bin/bash
-#This script allows for update, upgrade, and dist-upgrade
+#This script allows for update, upgrade
 #Author: Stephen J Kennedy
 #version 1.2
 #DEBUG used with -x (reports shell name, line number, and associated function)
@@ -28,14 +28,11 @@ fi
 }
 
 #Auto-update and upgrade process. Checks for need to dist-upgrade and
-#exits with return 3 if dist-upgrade needed.
-#Auto-update and upgrade process. Checks for need to dist-upgrade and
-#exits with return 3 if dist-upgrade needed.
-
+#exits with return 3 if dist-upgrade needed. Will email a notice to run 
+#dist-upgrade
 autoUpdate (){
 echo "Starting update for $HOSTNAME at $TIME on ${DATE}." > $LOG
-#sudo apt-get update
-
+sudo apt-get update
 for UPDATE in $UPDATE
 do
    echo "Starting apt-get ${UPDATE}..." >> $LOG
