@@ -1,7 +1,7 @@
 #!/bin/bash
-#This script allows for update, upgrade
+#This script allows for update, upgrade, and dist-upgrade
 #Author: Stephen J Kennedy
-#version 1.2
+#version 1.3
 #DEBUG used with -x (reports shell name, line number, and associated function)
 PS4='+ $BASH_SOURCE : $LINENO : ${FUNCNAME[0]} ()'
 
@@ -13,37 +13,35 @@ LOG="${LOGPATH}/log/${DATE}-${PID}-log"
 TEMP="${LOGPATH}/.temp"
 MAIL=/usr/bin/mail
 TO="medicup@gmail.com"
-UPDATE="upgrade dist-upgrade" #options for autoUpdate do statement
 
 #mail Function uses mail to distribute results of autoUpdate
 mailOutput(){
-if [ $? -ne 0 ]
-   then
-      echo "mail error"
-      $MAIL -s "Error with ${HOSTNAME} update: check ${UPDATE}." $TO < $LOG
-   else
-      echo "Success!"
-      $MAIL -s ${DATE}-${HOSTNAME}  $TO < $LOG
-fi
+   if [ $? -ne 0 ]
+      then
+         echo "mail error"
+         $MAIL -s "Error with ${HOSTNAME} update: check ${UPDATE}." $TO < $LOG
+      else
+         echo "Success!"
+         $MAIL -s ${DATE}-${HOSTNAME}  $TO < $LOG
+   fi
 }
 
-#Auto-update and upgrade process. Checks for need to dist-upgrade and
-#exits with return 3 if dist-upgrade needed. Will email a notice to run 
-#dist-upgrade
+#Checks for need to dist-upgrade and
+#exits with return 3 if dist-upgrade needed.
 autoUpdate (){
-echo "Starting update for $HOSTNAME at $TIME on ${DATE}." > $LOG
-sudo apt-get update
-for UPDATE in $UPDATE
-do
-   echo "Starting apt-get ${UPDATE}..." >> $LOG
-   if [ ${UPDATE} = "dist-upgrade" ]
-      then
-        apt-get --assume-no $UPDATE || echo "DIST-UPGRADE required" >> $LOG return 3
-   else
-        apt-get --assume-yes $UPDATE >> $LOG ||  return 1
-        echo "apt-get ${UPDATE} successful!" >> $LOG
-   fi
-done
+   echo "Starting update for $HOSTNAME at $TIME on ${DATE}." > $LOG
+   sudo apt-get update
+   for UPDATE in upgrade dist-upgrade
+   do
+      echo "Starting apt-get ${UPDATE}..." >> $LOG
+      if [ ${UPDATE} = "dist-upgrade" ]
+         then
+           apt-get --assume-no $UPDATE || echo "DIST-UPGRADE required" >> $LOG return 3
+      else
+           apt-get --assume-yes $UPDATE >> $LOG ||  return 1
+           echo "apt-get ${UPDATE} successful!" >> $LOG
+      fi
+   done
 }
 
 autoUpdate
