@@ -4,6 +4,7 @@
 #version 1.4
 #DEBUG used with -x (reports shell name, line number, and associated function)
 PS4='+ $BASH_SOURCE : $LINENO : ${FUNCNAME[0]} ()'
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 DATE=$(date +"%F")
 TIME=$(date +"%H:%M:%S")
